@@ -179,11 +179,11 @@ export type {
 } from "./preflight.ts";
 
 export {
+  SAC_TRANSFER_FROM_METHOD,
+  SAC_TRANSFER_METHOD,
   sacTransfer,
   sacTransferFrom,
-  type SacTransferAmount,
-  type SacTransferFromParams,
-  type SacTransferParams,
+  type SacAmount,
 } from "./calls.ts";
 
 export {

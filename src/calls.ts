@@ -1,9 +1,9 @@
 /**
  * ContractCall helpers for common SAC operations.
  *
- * Every integration hand-builds `{contractId, method: 'transfer', args: [from, to, amount]}` — arg-order
+ * Every integration hand-builds `{contract, fn, args}` for a SAC transfer — arg-order
  * mistakes are a consumer-side bug class the SDK can eliminate. These builders produce typed `ContractCall` values
- * with args in contract-verified positions. Wrong-order becomes impossible for the two functions
+ * with `xdr.ScVal` args in contract-verified positions. Wrong-order becomes impossible for the two functions
  * the guard actually parses.
  *
  * Spec reference: SPEC §6.2 (SAC transfer / transfer_from argument layouts).
@@ -14,6 +14,9 @@
  * changes, update both the builders and the citation-aware test.
  */
 
+import { Address, nativeToScVal, xdr } from "@stellar/stellar-sdk";
+import { isContractAddress, type ContractAddress } from "./policy.ts";
+import { InvalidInputError } from "./preflight.ts";
 import type { ContractCall } from "./tx.ts";
 
 /**
@@ -39,6 +42,38 @@ export const SAC_TRANSFER_METHOD = "transfer" as const;
 export const SAC_TRANSFER_FROM_METHOD = "transfer_from" as const;
 
 /**
+ * Brand a contract id for `ContractCall`, refusing anything that is not a valid
+ * C… StrKey. A malformed token address is a programmer error, so it fails here
+ * (synchronously, before any RPC round-trip) rather than inside `check()`.
+ */
+function tokenAddress(token: string): ContractAddress {
+  if (!isContractAddress(token)) {
+    throw new InvalidInputError(
+      "token",
+      "strkey",
+      "token must be a valid C... StrKey contract address",
+    );
+  }
+  return token;
+}
+
+/**
+ * Encode a SAC amount as the `i128` the token contract's `transfer` expects.
+ *
+ * `string` and `bigint` are both accepted and normalized through `BigInt`, so a
+ * decimal-string amount cannot silently lose precision the way a `number` can.
+ */
+function amountToScVal(amount: SacAmount): xdr.ScVal {
+  let value: bigint;
+  try {
+    value = BigInt(amount);
+  } catch {
+    throw new InvalidInputError("amount", "integer", `amount must be an integer, got ${String(amount)}`);
+  }
+  return nativeToScVal(value, { type: "i128" });
+}
+
+/**
  * Build a `ContractCall` for a SAC `transfer`.
  *
  * SPEC §6.2 positions: `[from, to, amount]`.
@@ -50,9 +85,9 @@ export const SAC_TRANSFER_FROM_METHOD = "transfer_from" as const;
  */
 export function sacTransfer(token: string, from: string, to: string, amount: SacAmount): ContractCall {
   return {
-    contractId: token,
-    method: SAC_TRANSFER_METHOD,
-    args: [from, to, amount],
+    contract: tokenAddress(token),
+    fn: SAC_TRANSFER_METHOD,
+    args: [new Address(from).toScVal(), new Address(to).toScVal(), amountToScVal(amount)],
   };
 }
 
@@ -78,8 +113,13 @@ export function sacTransferFrom(
   amount: SacAmount,
 ): ContractCall {
   return {
-    contractId: token,
-    method: SAC_TRANSFER_FROM_METHOD,
-    args: [from, spender, to, amount],
+    contract: tokenAddress(token),
+    fn: SAC_TRANSFER_FROM_METHOD,
+    args: [
+      new Address(from).toScVal(),
+      new Address(spender).toScVal(),
+      new Address(to).toScVal(),
+      amountToScVal(amount),
+    ],
   };
 }
