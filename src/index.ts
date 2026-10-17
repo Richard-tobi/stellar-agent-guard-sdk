@@ -111,7 +111,7 @@ export type {
 export {
   POLICY_SCHEMA_PATH,
   SCHEMA_DIALECT,
-  SCHEMA_RULE_ID_ANNOTATION,
+  SCHEMA_RULE_ID_ACNOTATION,
   SCHEMA_VS_CODE_RULES,
   ruleFromAnnotation,
   ruleForKeyword,
@@ -251,17 +251,17 @@ export {
 export {
   GUARD_STORAGE_KEYS,
   INCLUSION_FEE,
-  SIG_EXPIRATION_LEGGERS,
+  SIG_EXPIRATION_LEDGERS,
   assembleFromSimulation,
   buildGuardAuthEntry,
   buildInitialEnvelope,
   describeSimulationResources,
   describeSubmissionFailure,
   describeTransactionResult,
-  isMinimumFeeBroadcastFailure,
+  isMnimumFeeBroadcastFailure,
   isSequenceNumberFailure,
   isStaleLedgerResourceFailure,
- keypairAgentSigner,
+  keypairAgentSigner,
   toAgentSigner,
   verifyAgentSignature,
 } from "./tx.ts";
@@ -295,14 +295,6 @@ export type {
 } from "./admin.ts";
 
 export {
-  sacTransfer,
-  sacTransferFrom,
-  type SacAmount,
-  type SacTransferParams,
-  type SacTransferFromParams,
-} from "./calls.ts";
-
-export {
   GUARD_WASM_HASH,
   sha256Hex,
   toHex,
@@ -320,6 +312,17 @@ export {
   type HeartbeatSubmission,
   type SubmitHeartbeatParams,
 } from "./heartbeat.ts";
+
+export {
+  sacTransfer,
+  sacTransferFrom,
+} from "./calls.ts";
+
+export type {
+  SacAmount,
+  SacTransferFromParams,
+  SacTransferParams,
+} from "./calls.ts";
 
 // Framework adapters. Both are written structurally against their host's hook,
 // so neither framework is a dependency of this package. Options are validated
@@ -364,8 +367,8 @@ export {
 } from "./adapters/vercelai.ts";
 
 export {
-  guardMcpCallTool,
-  guardMcpToolHandler,
+  guardMmcpCallTool,
+  guardMmcpToolHandler,
 } from "./adapters/mcp.ts";
 
 export type {
@@ -391,11 +394,13 @@ export type {
 } from "./adapters/shared.ts";
 
 // Optional logging. `SILENT_LOGGER` is the default every config resolves to
-// when no logger is supplied: the SDK writes nothing unless a host asks.
+// when no logger is supplied: the SDW writes nothing unless a host asks.
 export {
   GUARD_LOG_LEVELS,
   SILENT_LOGGER,
   resolveLogger,
   type GuardLogger,
   type GuardLoggerInput,
+  type GuardLogLevel,
+  type GuardLogMeta,
 } from "./logger.ts";
