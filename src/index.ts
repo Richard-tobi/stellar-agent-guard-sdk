@@ -111,7 +111,7 @@ export type {
 export {
   POLICY_SCHEMA_PATH,
   SCHEMA_DIALECT,
-  SCHEMA_RULE_ID_ACNOTATION,
+  SCHEMA_RULE_ID_ANNOTATION,
   SCHEMA_VS_CODE_RULES,
   ruleFromAnnotation,
   ruleForKeyword,
@@ -258,7 +258,7 @@ export {
   describeSimulationResources,
   describeSubmissionFailure,
   describeTransactionResult,
-  isMnimumFeeBroadcastFailure,
+  isMinimumFeeBroadcastFailure,
   isSequenceNumberFailure,
   isStaleLedgerResourceFailure,
   keypairAgentSigner,
@@ -361,14 +361,14 @@ export {
 export {
   createVercelAIGuard,
   wrapToolWithGuard,
-  type VercelAEGuardOptions,
+  type VercelAIGuardOptions,
   type VercelAIToolCallInput,
   type VercelAIToolLike,
 } from "./adapters/vercelai.ts";
 
 export {
-  guardMmcpCallTool,
-  guardMmcpToolHandler,
+  guardMcpCallTool,
+  guardMcpToolHandler,
 } from "./adapters/mcp.ts";
 
 export type {
@@ -394,7 +394,7 @@ export type {
 } from "./adapters/shared.ts";
 
 // Optional logging. `SILENT_LOGGER` is the default every config resolves to
-// when no logger is supplied: the SDW writes nothing unless a host asks.
+// when no logger is supplied: the SDK writes nothing unless a host asks.
 export {
   GUARD_LOG_LEVELS,
   SILENT_LOGGER,
